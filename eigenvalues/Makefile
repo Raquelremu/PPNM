@@ -1,33 +1,23 @@
-# Makefile for convergence analysis and parallel runs
-
 # Files and compiler settings
 CSFILES   = Program.cs
 TARGET    = main.exe
 MONO      = mcs
 CFLAGS    = -debug -out:$(TARGET)
 
-# Default target: compile the executable.
 all: $(TARGET)
 
 $(TARGET): $(CSFILES)
 	$(MONO) $(CFLAGS) $(CSFILES)
 
-# ------------------------------------------------
-# Parameter ranges for convergence studies:
-# ------------------------------------------------
-# Experiment 1: Fix rmax to a given value and vary dr.
+
+# Experiment 1
 RMAX_FIXED = 10
-# Adjust the Δr values as needed (e.g., from 0.1 to 0.4).
 DR_VALUES  = 0.1 0.15 0.2 0.25 0.3 0.35 0.4
 
-# Experiment 2: Fix dr to a given value and vary rmax.
+# Experiment 2
 DR_FIXED   = 0.3
-# Adjust the rmax values as needed.
 RMAX_VALUES = 8 10 12 14 16
 
-# ------------------------------------------------
-# Target: Convergence with varying dr (fixed rmax)
-# ------------------------------------------------
 conv_dr: $(TARGET)
 	@echo "Running convergence analysis: fixed rmax=$(RMAX_FIXED), varying dr"
 	@rm -f out_dr.txt
@@ -39,9 +29,6 @@ conv_dr: $(TARGET)
 	sort out_dr.txt -o out_dr.txt
 	@echo "Convergence (dr): timing information is in out_dr.txt"
 
-# ------------------------------------------------
-# Target: Convergence with varying rmax (fixed dr)
-# ------------------------------------------------
 conv_rmax: $(TARGET)
 	@echo "Running convergence analysis: fixed dr=$(DR_FIXED), varying rmax"
 	@rm -f out_rmax.txt
@@ -53,24 +40,14 @@ conv_rmax: $(TARGET)
 	sort out_rmax.txt -o out_rmax.txt
 	@echo "Convergence (rmax): timing information is in out_rmax.txt"
 
-# ------------------------------------------------
-# Combined target for convergence experiments.
-# ------------------------------------------------
 conv: conv_dr conv_rmax
 
-# ------------------------------------------------
-# Optional plotting targets using gnuplot (if installed).
-# These targets plot the convergence curves from the timing files.
-# ------------------------------------------------
 plot_dr:
 	@gnuplot -e "set terminal png; set output 'convergence_dr.png'; set title 'Convergence vs. Δr (rmax=$(RMAX_FIXED))'; set xlabel 'Δr'; set ylabel 'Time (sec)'; plot 'out_dr.txt' using 1:2 with linespoints title 'Δr'" 
 
 plot_rmax:
 	@gnuplot -e "set terminal png; set output 'convergence_rmax.png'; set title 'Convergence vs. rmax (Δr=$(DR_FIXED))'; set xlabel 'rmax'; set ylabel 'Time (sec)'; plot 'out_rmax.txt' using 1:2 with linespoints title 'rmax'"
 
-# ------------------------------------------------
-# Clean up generated files.
-# ------------------------------------------------
 clean:
 	rm -f $(TARGET) out_dr.txt out_rmax.txt conv_dr_*.txt conv_rmax_*.txt *.png
 
