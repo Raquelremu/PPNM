@@ -48,7 +48,6 @@ public class AdaptiveIntegration
         }
     }
 
-    // Updated method with error usage
     public static void GenerateComparisonData()
     {
         var testCases = new (string name, Func<double, double> f, double a, double b, double exact)[]
@@ -65,7 +64,7 @@ public class AdaptiveIntegration
             {
                 FunctionEvaluations = 0;
                 var (result, error) = integrate(test.f, test.a, test.b, 1e-6, 1e-6);
-                // Now using the error value in output
+                
                 writer.WriteLine($"{test.name} {result:F6} {test.exact:F6} {error:E3}");
             }
         }
@@ -73,7 +72,6 @@ public class AdaptiveIntegration
 
     public static void CreateGnuplotScripts()
     {
-        // Error plot
         File.WriteAllText("plot_errors.gp", 
             "set terminal pngcairo enhanced font 'Arial,12'\n" +
             "set output 'errors.png'\n" +
@@ -87,7 +85,6 @@ public class AdaptiveIntegration
             "plot 'error_data.dat' using 1:2 with linespoints pt 7 title 'Estimated', " +
             "'error_data.dat' using 1:3 with linespoints pt 9 title 'Actual'");
 
-        // Evaluations plot
         File.WriteAllText("plot_evaluations.gp", 
             "set terminal pngcairo enhanced font 'Arial,12'\n" +
             "set output 'evaluations.png'\n" +
