@@ -4,7 +4,6 @@ using System.Collections.Generic;
 using static System.Math;
 
 public class ode {
-    // Vector class implementation
     public class vector {
         private double[] data;
         
@@ -54,7 +53,6 @@ public class ode {
         }
     }
 
-    // Generic list implementation
     public class genlist<T> : IEnumerable<T> {
         private T[] data;
         public int size => data.Length;
@@ -81,7 +79,6 @@ public class ode {
         }
     }
 
-    // Embedded Runge-Kutta stepper (RK12: midpoint-Euler method)
     public static (vector, vector) rkstep12(
     	Func<double, vector, vector> f,
 	double x,
@@ -93,7 +90,6 @@ public class ode {
 	    vector yh = y + k1*h;
 	    vector δy = (k1 - k0)*h;
 	    
-	    // Add NaN/infinity check
 	    for (int i = 0; i < yh.size; i++) {
 		if (double.IsNaN(yh[i]) || double.IsInfinity(yh[i])) {
 		    throw new Exception("Numerical instability in rkstep12");
@@ -103,7 +99,6 @@ public class ode {
     return (yh, δy);
     }
 
-    // Embedded Runge-Kutta stepper (RK23: Bogacki-Shampine method)
     public static (vector, vector) rkstep23(
     Func<double, vector, vector> f,
     double x,
@@ -119,7 +114,6 @@ public class ode {
     vector yh_lower = y + k0*(7*h/24) + k1*(h/4) + k2*(h/3) + k3*(h/8);
     vector δy = yh - yh_lower;
     
-    // Add NaN/infinity check
     for (int i = 0; i < yh.size; i++) {
         if (double.IsNaN(yh[i]) || double.IsInfinity(yh[i])) {
             throw new Exception("Numerical instability in rkstep23");
@@ -129,15 +123,14 @@ public class ode {
     return (yh, δy);
 }
 
-    // Adaptive-step-size driver routine
 public static (genlist<double>, genlist<vector>) driver(
-    Func<double, vector, vector> f,  // the f from dy/dx=f(x,y)
-    (double, double) interval,      // (initial-point, final-point)
-    vector yinit,                   // y(initial-point)
-    double h = 0.125,               // initial step-size
-    double acc = 0.01,              // absolute accuracy goal
-    double eps = 0.01,              // relative accuracy goal
-    string method = "rk12"          // integration method
+    Func<double, vector, vector> f,  
+    (double, double) interval,      
+    vector yinit,               
+    double h = 0.125,             
+    double acc = 0.01,     
+    double eps = 0.01,            
+    string method = "rk12"       
 ) {
     var (a, b) = interval;
     double x = a;
@@ -145,7 +138,6 @@ public static (genlist<double>, genlist<vector>) driver(
     var xlist = new genlist<double>(); xlist.add(x);
     var ylist = new genlist<vector>(); ylist.add(y.copy());
     
-    // Add step counter for debug
     int stepCount = 0;
     const int maxSteps = 1000000;
     
@@ -160,14 +152,13 @@ public static (genlist<double>, genlist<vector>) driver(
             return (xlist, ylist);
         }
         
-        if (x >= b) return (xlist, ylist); // job done
-        if (x + h > b) h = b - x;         // last step should end at b
+        if (x >= b) return (xlist, ylist);
+        if (x + h > b) h = b - x;  
         
         (vector yh, vector δy) = method == "rk23" 
             ? rkstep23(f, x, y, h) 
             : rkstep12(f, x, y, h);
         
-        // Add NaN/infinity check
         for (int i = 0; i < yh.size; i++) {
             if (double.IsNaN(yh[i]) || double.IsInfinity(yh[i])) {
                 Console.WriteLine($"Numerical instability detected at x = {x}, h = {h}");
@@ -178,25 +169,23 @@ public static (genlist<double>, genlist<vector>) driver(
         double tol = (acc + eps * yh.norm()) * Sqrt(h/(b-a));
         double err = δy.norm();
         
-        if (err <= tol) { // accept step
+        if (err <= tol) { 
             x += h; y = yh;
             xlist.add(x);
             ylist.add(y.copy());
         }
         
-        // Adjust step-size
+
         if (err > 0) h *= Min(Pow(tol/err, 0.25) * 0.95, 2);
         else h *= 2;
     } while (true);
 }
 
-    // Quadratic spline interpolation
     public static Func<double, vector> make_qspline(genlist<double> x, genlist<vector> y) {
         int n = x.size;
         vector[] b = new vector[n-1];
         vector[] c = new vector[n-1];
         
-        // Calculate b_i and c_i coefficients
         for (int i = 0; i < n-1; i++) {
             double h = x[i+1] - x[i];
             vector dy = y[i+1] - y[i];
@@ -205,7 +194,7 @@ public static (genlist<double>, genlist<vector>) driver(
                 c[i] = (b[i] - b[i-1])/(2*h);
             }
         }
-        c[0] = new vector(y[0].size); // Initialize first c to zero vector
+        c[0] = new vector(y[0].size); 
         
         return delegate(double z) {
             int i = binsearch(x, z);
@@ -214,7 +203,6 @@ public static (genlist<double>, genlist<vector>) driver(
         };
     }
 
-    // Binary search for spline
     private static int binsearch(genlist<double> x, double z) {
         int i = 0, j = x.size - 1;
         while (j - i > 1) {
@@ -225,7 +213,6 @@ public static (genlist<double>, genlist<vector>) driver(
         return i;
     }
 
-    // Alternative interface with quadratic spline
     public static Func<double, vector> make_ode_ivp_qspline(
         Func<double, vector, vector> f,
         (double, double) interval,
