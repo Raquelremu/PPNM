@@ -1,0 +1,9 @@
+Rosenbrock minimum at: 1.000000, 1.000000
+Steps taken: 1
+Function value at minimum: 0.000000
+ 
+HimmelBlau minimum at: -2.805118, 3.131312
+Steps taken: 4
+Function value at minimum: 0.000000
+ 
+Higgs fit parameters: 125.972188 -2.085873 9.874482 

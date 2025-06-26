@@ -28,7 +28,7 @@ public class matrix{
       size1 = n; size2 = m;
       data = new double[size1 * size2];
    }
-   public double this[int i, int j]{
+   public double M[int i, int j]{
       get => data[i + j * size1];
       set => data[i + j * size1] = value;
    }
@@ -43,7 +43,7 @@ public class matrix{
       matrix copy = new matrix(size1, size2);
       for (int i = 0; i < size1; i++){
          for (int j = 0; j < size2; j++){
-            copy[i, j] = this[i, j];
+            copy[i, j] = M[i, j];
          }
       }
       return copy;

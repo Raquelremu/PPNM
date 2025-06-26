@@ -62,7 +62,7 @@ class Program
     {
         int n = 10;
         double[] x = new double[n];
-        double[] y = new double[n];
+        double[] y = new double*[n];
         
         for (int i = 0; i < n; i++)
         {
