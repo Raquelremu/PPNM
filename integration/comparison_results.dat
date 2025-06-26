@@ -1,0 +1,4 @@
+# Function C#Result ExactValue C#Error
+1/sqrt(x) 2.000000 2.000000 6.149E-007
+ln(x)/sqrt(x) -4.000000 -4.000000 6.138E-007
+exp(-x^2) 0.746824 0.886227 4.927E-007

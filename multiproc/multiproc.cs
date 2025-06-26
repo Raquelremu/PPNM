@@ -35,7 +35,7 @@ class main
 
         for (long i = 0; i < nthreads; i++)
         {
-            data[i] = new datum();  // 🔴 Fix: Initialize each element before use
+            data[i] = new datum(); 
             data[i].start = nterms / nthreads * i;
             data[i].stop = nterms / nthreads * (i + 1);
         }
@@ -50,7 +50,7 @@ class main
         double sum = 0;
         foreach (var d in data) 
         {
-            if (d != null) // 🔴 Fix: Ensure `d` is not null before accessing `.sum`
+            if (d != null)
             {
                 sum += d.sum;
             }
