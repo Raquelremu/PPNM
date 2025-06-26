@@ -48,7 +48,6 @@ public class AdaptiveIntegration
         }
     }
 
-    // Updated method with error usage
     public static void GenerateComparisonData()
     {
         var testCases = new (string name, Func<double, double> f, double a, double b, double exact)[]
@@ -65,7 +64,7 @@ public class AdaptiveIntegration
             {
                 FunctionEvaluations = 0;
                 var (result, error) = integrate(test.f, test.a, test.b, 1e-6, 1e-6);
-                // Now using the error value in output
+                
                 writer.WriteLine($"{test.name} {result:F6} {test.exact:F6} {error:E3}");
             }
         }
@@ -73,7 +72,6 @@ public class AdaptiveIntegration
 
     public static void CreateGnuplotScripts()
     {
-        // Error plot
         File.WriteAllText("plot_errors.gp", 
             "set terminal pngcairo enhanced font 'Arial,12'\n" +
             "set output 'errors.png'\n" +
@@ -87,7 +85,6 @@ public class AdaptiveIntegration
             "plot 'error_data.dat' using 1:2 with linespoints pt 7 title 'Estimated', " +
             "'error_data.dat' using 1:3 with linespoints pt 9 title 'Actual'");
 
-        // Evaluations plot
         File.WriteAllText("plot_evaluations.gp", 
             "set terminal pngcairo enhanced font 'Arial,12'\n" +
             "set output 'evaluations.png'\n" +
@@ -99,7 +96,6 @@ public class AdaptiveIntegration
             "set ylabel 'Evaluations'\n" +
             "plot 'error_data.dat' using 1:4 with linespoints pt 5 lw 2 title ''");
 
-        // Enhanced comparison plot with error labels
         File.WriteAllText("plot_comparison.gp", 
             "set terminal pngcairo enhanced font 'Arial,12'\n" +
             "set output 'comparison.png'\n" +
@@ -109,7 +105,7 @@ public class AdaptiveIntegration
             "set title 'Integration Results (with error estimates)'\n" +
             "set ylabel 'Value'\n" +
             "set xtics rotate by -45\n" +
-            "set yrange [-5:3]\n" +  // Adjusted for negative values
+            "set yrange [-5:3]\n" + 
             "plot 'comparison_results.dat' using 2:xtic(1) title 'C#', " +
             "'comparison_results.dat' using 3 title 'Exact', " +
             "'' using 0:($2>$3?$2:$3):4 with labels offset 0,1 font ',10' notitle");
@@ -124,8 +120,8 @@ public class AdaptiveIntegration
     public static void Main(string[] args)
     {
         GenerateErrorAnalysisData();
-        GenerateComparisonData();  // Now uses the error values
-        CreateGnuplotScripts();   // Creates enhanced plots
+        GenerateComparisonData(); 
+        CreateGnuplotScripts();  
 
         Console.WriteLine("Generated all data files and plot scripts");
         Console.WriteLine("Run with: gnuplot plot_errors.gp, plot_evaluations.gp, plot_comparison.gp");

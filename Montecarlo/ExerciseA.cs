@@ -63,7 +63,6 @@ public class Program
         var a = new vector(new[] { -1.0, -1.0 });
         var b = new vector(new[] { 1.0, 1.0 });
 
-        // Function for computing the unit circle area: points inside the circle contribute 1; outside contribute 0.
         Func<vector, double> circleFunc = v =>
             (v[0] * v[0] + v[1] * v[1] <= 1) ? 1.0 : 0.0;
 
@@ -94,7 +93,6 @@ public class Program
         var a = new vector(new[] { 0.0, 0.0, 0.0 });
         var b = new vector(new[] { Math.PI, Math.PI, Math.PI });
 
-        // Improved integrand for singular integral with careful handling near singularities.
         Func<vector, double> singularFunc = v =>
         {
             double cosx = Math.Cos(v[0]);
@@ -102,7 +100,6 @@ public class Program
             double cosz = Math.Cos(v[2]);
             double product = cosx * cosy * cosz;
 
-            // Skip points too close to the singular region.
             if (1 - product < 1e-12)
                 return 0;
 

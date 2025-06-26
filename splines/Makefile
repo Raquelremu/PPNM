@@ -3,7 +3,6 @@ CSC = mcs
 GNUPLOT = gnuplot
 SED = sed
 
-# Targets
 all: spline_plot_A.png spline_plot_B.png
 
 # Exercise A
@@ -34,7 +33,6 @@ spline_plot_B.png: spline_data_B.txt plot_spline_B.gp
 	$(GNUPLOT) plot_spline_B.gp
 	mv spline_plot.png spline_plot_B.png
 
-# Clean up
 clean:
 	rm -f *.exe spline_data_*.txt plot_spline_*.gp spline_plot_*.png
 
